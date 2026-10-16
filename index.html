@@ -1,0 +1,1205 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Sitoplazma va hujayraning membranasiz organoidlari: ribosoma, hujayra markazi, mikronaychalar, mikroiplar va kiprikchalar. 3D modelli biologiya taqdimoti.">
+<meta name="robots" content="index,follow">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Sitoplazma va membranasiz organoidlar">
+<meta property="og:description" content="3D modellar bilan hujayraning membranasiz organoidlari haqida biologiya taqdimoti.">
+<meta property="og:locale" content="uz_UZ">
+<meta name="theme-color" content="#04131D">
+<title>Sitoplazma va membranasiz organoidlar | Biologiya taqdimoti</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&family=Syne:wght@600;800&display=swap">
+<style>
+/* LAYOUT: a microscope "field of view" (pale lit disc) glides across a deep-marine ground on each slide.
+   Glass panes hold the text; a WebGL stage holds the 3D organelle. Bottom bar = glossy icon navigation. */
+:root{
+  --abyss:#04131D;      /* deep marine ground */
+  --deep:#0A2A3A;       /* cytosol blue */
+  --aqua:#2DD4C8;       /* tubulin / highlights */
+  --amber:#FFB547;      /* ribosome gold */
+  --magenta:#FF5FA2;    /* centriole */
+  --lime:#B7F34A;       /* polypeptide / emphasis */
+  --coral:#FF7A66;      /* actin */
+  --pearl:#E6F7F4;
+  --on-dark:#EAF7F5;
+  --on-light:#04131D;
+  --aqua-ink:#066A65;
+  --amber-ink:#8A4B00;
+  --mag-ink:#B0215E;
+  --display:'Syne','Trebuchet MS',system-ui,sans-serif;
+  --body:'Instrument Sans','Segoe UI',system-ui,sans-serif;
+  --leaf:30px 8px 30px 8px;
+  --gut:max(clamp(16px,4vw,56px),env(safe-area-inset-left,0px));
+  --gut-r:max(clamp(16px,4vw,56px),env(safe-area-inset-right,0px));
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--abyss);color:var(--on-dark);font:400 1rem/1.6 var(--body);-webkit-font-smoothing:antialiased;overflow:hidden}
+button{font:inherit;color:inherit}
+p{margin:0}
+.app{position:relative;height:100%;overflow:hidden;isolation:isolate;
+  background:radial-gradient(120% 90% at 20% 10%,#0E3A4D 0%,var(--abyss) 60%)}
+
+/* ---------- background ---------- */
+.field{position:absolute;border-radius:50%;transform:translate(-50%,-50%);
+  background:radial-gradient(circle at 42% 36%,#F6FFFD 0%,#CDEFEA 42%,#8FD0D6 78%,#6FB4C8 100%);
+  box-shadow:inset 0 0 140px rgba(4,19,29,.38),0 0 0 2px rgba(255,255,255,.28),0 0 0 16px rgba(255,255,255,.05),0 0 120px rgba(45,212,200,.25);
+  transition:left 1.4s cubic-bezier(.7,0,.2,1),top 1.4s cubic-bezier(.7,0,.2,1),width 1.4s cubic-bezier(.7,0,.2,1),height 1.4s cubic-bezier(.7,0,.2,1)}
+.orb{position:absolute;border-radius:50%;filter:blur(70px);transform:translate(-50%,-50%);opacity:.55;
+  transition:left 2s cubic-bezier(.6,0,.2,1),top 2s cubic-bezier(.6,0,.2,1)}
+.o1{width:40vmax;height:40vmax;background:radial-gradient(circle,var(--aqua),transparent 68%)}
+.o2{width:30vmax;height:30vmax;background:radial-gradient(circle,var(--amber),transparent 68%);opacity:.4}
+.o3{width:34vmax;height:34vmax;background:radial-gradient(circle,var(--magenta),transparent 68%);opacity:.38}
+.o4{width:26vmax;height:26vmax;background:radial-gradient(circle,var(--lime),transparent 68%);opacity:.3}
+#drift{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+
+/* ---------- glass ---------- */
+.g,.gl,.bar{-webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);
+  border-radius:var(--leaf);padding:clamp(16px,2.2vw,28px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.34),inset 0 -1px 0 rgba(255,255,255,.06),0 26px 60px -24px rgba(2,10,16,.7)}
+.g,.bar{background:linear-gradient(140deg,rgba(6,28,40,.62),rgba(6,28,40,.5));border:1px solid rgba(255,255,255,.24);color:var(--on-dark)}
+.gl{background:linear-gradient(140deg,rgba(255,255,255,.7),rgba(255,255,255,.56));border:1px solid rgba(255,255,255,.75);color:var(--on-light)}
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .g,.bar{background:rgba(6,28,40,.92)} .gl{background:rgba(232,248,245,.95)}
+}
+
+/* ---------- type ---------- */
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance}
+h1{font-weight:800;font-size:clamp(1.8rem,5vw,4rem);line-height:1.05;letter-spacing:-.015em;overflow-wrap:break-word}
+h2{font-weight:800;font-size:clamp(1.4rem,3.2vw,2.5rem);line-height:1.1;letter-spacing:-.01em;overflow-wrap:break-word}
+h3{font-weight:600;font-size:clamp(1rem,1.5vw,1.2rem);line-height:1.25;margin-bottom:.5rem}
+.tag{font:600 .72rem/1 var(--body);letter-spacing:.18em;text-transform:uppercase;color:var(--lime);margin-bottom:12px}
+.gl .tag{color:var(--aqua-ink)}
+.lead{font-size:clamp(1rem,1.3vw,1.15rem);color:rgba(234,247,245,.92);max-width:60ch}
+.g p,.g li{color:rgba(234,247,245,.92)}
+.gl p,.gl li{color:rgba(4,19,29,.9)}
+.key{color:var(--amber);font-weight:600}
+.gl .key{color:var(--amber-ink)}
+.rose{color:var(--magenta)} .gl .rose{color:var(--mag-ink)}
+.num{font-family:var(--display);font-weight:800;color:var(--lime);font-variant-numeric:tabular-nums}
+
+/* ---------- slides ---------- */
+.slide{position:absolute;inset:0;padding-block:clamp(12px,2.6vh,30px) 96px;overflow-y:auto;overflow-x:hidden;
+  opacity:0;visibility:hidden;transition:opacity .55s ease,visibility 0s .55s}
+.slide.on{opacity:1;visibility:visible;transition:opacity .6s ease .2s,visibility 0s}
+.wrap{position:relative;z-index:1;max-width:1240px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;
+  justify-content:center;gap:14px;padding-left:var(--gut);padding-right:var(--gut-r)}
+.slide.on .r{animation:rise .85s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*90ms + 150ms)}
+@keyframes rise{from{opacity:.35;transform:translateY(22px)}to{opacity:1;transform:none}}
+
+.head{align-self:flex-start;max-width:100%;display:flex;align-items:center;gap:16px}
+.head h2{max-width:24ch}
+.head .tag{margin-bottom:10px}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,270px),1fr));gap:14px}
+.cols>*,.three>*,.five>*{min-width:0}
+.three{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.five{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.list{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.list li{position:relative;padding-left:22px}
+.list li::before{content:"";position:absolute;left:1px;top:.5em;width:9px;height:9px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#fff,var(--aqua) 45%,#0a6a70);box-shadow:0 1px 3px rgba(0,0,0,.4)}
+.gl .list li::before{background:radial-gradient(circle at 35% 30%,#fff,var(--amber) 45%,#a85a00)}
+.list li.tdi::before{display:none}
+
+/* ---------- 3D icons ---------- */
+.ic{width:56px;height:56px;flex:none;display:block;filter:drop-shadow(0 8px 10px rgba(2,10,16,.45))}
+.ic.lg{width:84px;height:84px}
+.ic.sm{width:30px;height:30px;filter:drop-shadow(0 3px 4px rgba(2,10,16,.5))}
+.icrow{display:flex;flex-wrap:wrap;gap:18px 22px;margin-top:22px}
+.icitem{display:grid;justify-items:center;gap:6px;font-size:.8rem;color:rgba(234,247,245,.9);text-align:center}
+.float{animation:bob 5s ease-in-out infinite}
+.float:nth-child(2){animation-delay:-1s}.float:nth-child(3){animation-delay:-2s}.float:nth-child(4){animation-delay:-3s}.float:nth-child(5){animation-delay:-4s}
+@keyframes bob{50%{transform:translateY(-7px)}}
+
+/* ---------- 3D stage slides ---------- */
+.split{display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.3fr);gap:14px;align-items:stretch}
+.info{display:flex;flex-direction:column;gap:12px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:6px 12px;border:1px solid rgba(255,255,255,.35);border-radius:4px 16px 4px 16px;font-size:.82rem;background:rgba(6,28,40,.7);color:var(--on-dark);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.gl .chip{border-color:rgba(4,19,29,.25);background:rgba(255,255,255,.5);color:var(--on-light)}
+.stage{position:relative;min-height:clamp(340px,56vh,600px);padding:0;overflow:hidden;touch-action:pan-y;cursor:grab;
+  background:radial-gradient(90% 80% at 50% 40%,rgba(14,58,77,.55),rgba(4,19,29,.72));border:1px solid rgba(255,255,255,.28);
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-radius:var(--leaf);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.34),inset 0 0 80px rgba(45,212,200,.08),0 26px 60px -24px rgba(2,10,16,.7)}
+.stage.drag{cursor:grabbing}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hots{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.hot{position:absolute;left:0;top:0;display:flex;align-items:center;gap:8px;font-size:.76rem;font-weight:600;white-space:nowrap;will-change:transform;
+  transition:opacity .3s}
+.hot i{width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,var(--lime) 55%,#5a8a10);
+  box-shadow:0 0 0 4px rgba(183,243,74,.25),0 0 12px rgba(183,243,74,.7);animation:pulse 2.4s ease-in-out infinite}
+.hot b{font-weight:600;padding:4px 10px;border-radius:3px 12px 3px 12px;background:rgba(4,19,29,.66);border:1px solid rgba(255,255,255,.3);
+  color:var(--on-dark);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+@keyframes pulse{50%{box-shadow:0 0 0 8px rgba(183,243,74,.08),0 0 16px rgba(183,243,74,.5)}}
+.tools{position:absolute;left:12px;bottom:12px;right:12px;display:flex;justify-content:space-between;align-items:center;gap:10px;pointer-events:none;flex-wrap:wrap}
+.tools .hint{font-size:.74rem;color:rgba(234,247,245,.75);pointer-events:none}
+.tools .btns{display:flex;gap:8px;pointer-events:auto}
+.tb{padding:7px 12px;border-radius:3px 12px 3px 12px;border:1px solid rgba(255,255,255,.4);background:rgba(4,19,29,.6);cursor:pointer;font-size:.78rem;font-weight:500}
+.tb:hover{background:rgba(45,212,200,.28)}
+.tb[aria-pressed="true"]{background:rgba(183,243,74,.28);border-color:var(--lime)}
+.nogl{position:absolute;inset:0;display:none;place-items:center;text-align:center;padding:24px;color:rgba(234,247,245,.85)}
+
+/* ---------- table, diagram ---------- */
+.tbl{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:.95rem}
+th{font:600 .72rem/1.2 var(--body);letter-spacing:.14em;text-transform:uppercase;text-align:left;padding:8px 12px;color:var(--aqua-ink)}
+td{padding:10px 12px;border-top:1px solid rgba(4,19,29,.14);vertical-align:middle}
+td:first-child{font-family:var(--display);font-weight:600;white-space:nowrap}
+.tdi{display:flex;align-items:center;gap:10px}
+.celldiag{width:100%;height:auto;display:block;max-height:60vh}
+.drops{position:relative;min-height:300px;overflow:hidden}
+.drop{position:absolute;border-radius:50%;
+  background:radial-gradient(circle at 34% 28%,rgba(255,255,255,.95),rgba(183,243,74,.5) 30%,rgba(45,212,200,.28) 62%,rgba(45,212,200,.12));
+  border:1px solid rgba(255,255,255,.55);box-shadow:inset -10px -14px 26px rgba(4,19,29,.28),0 14px 30px rgba(2,10,16,.35);
+  animation:wob 7s ease-in-out infinite}
+@keyframes wob{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(8px,-10px) scale(1.04,.96)}66%{transform:translate(-8px,6px) scale(.97,1.03)}}
+
+/* ---------- bottom bar ---------- */
+.bar{position:absolute;left:max(clamp(16px,3vw,32px),env(safe-area-inset-left,0px));right:max(clamp(16px,3vw,32px),env(safe-area-inset-right,0px));
+  bottom:12px;z-index:5;display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:24px 6px 24px 6px}
+.nb{flex:none;width:38px;height:38px;display:grid;place-items:center;border-radius:50%;border:1px solid rgba(255,255,255,.35);
+  background:rgba(255,255,255,.1);cursor:pointer;padding:0}
+.nb:hover{background:rgba(255,255,255,.22)}
+.nb:disabled{opacity:.35;cursor:default}
+.nav{flex:1;min-width:0;display:flex;justify-content:center;gap:clamp(4px,1vw,12px)}
+.nv{position:relative;width:40px;height:40px;display:grid;place-items:center;border-radius:12px;border:1px solid transparent;background:transparent;cursor:pointer;padding:0;
+  transition:transform .25s,background .25s}
+.nv:hover{transform:translateY(-3px)}
+.nv .ic{opacity:.62;transition:opacity .25s}
+.nv[aria-current="true"]{background:rgba(255,255,255,.16);border-color:rgba(183,243,74,.7);box-shadow:0 0 14px rgba(183,243,74,.35)}
+.nv[aria-current="true"] .ic{opacity:1}
+.cnt{flex:none;min-width:3.6rem;text-align:right;font:600 .8rem/1.2 var(--display);color:var(--lime);font-variant-numeric:tabular-nums}
+:focus-visible{outline:3px solid var(--lime);outline-offset:3px}
+
+/* ---------- responsive ---------- */
+@media (max-width:980px){
+  .split{grid-template-columns:1fr}
+  .stage{min-height:clamp(320px,50vh,460px);order:-1}
+  .three{grid-template-columns:1fr}
+  .five{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:700px){
+  .nav{display:none}
+  .bar{gap:12px}
+  .cnt{flex:1;text-align:center}
+  .head{flex-direction:column;align-items:flex-start}
+  .hot b{font-size:.7rem;padding:3px 8px}
+}
+@media (prefers-reduced-motion:reduce){
+  .field,.orb,.slide,.slide.on{transition:none!important}
+  .slide.on .r,.float,.drop,.hot i{animation:none}
+}
+</style>
+
+</head>
+<body>
+<div class="app" id="app">
+  <div class="field" id="field" aria-hidden="true" style="left:68%;top:48%;width:80vmax;height:80vmax"></div>
+  <div class="orb o1" aria-hidden="true"></div>
+  <div class="orb o2" aria-hidden="true"></div>
+  <div class="orb o3" aria-hidden="true"></div>
+  <div class="orb o4" aria-hidden="true"></div>
+  <canvas id="drift" aria-hidden="true"></canvas>
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+    <defs>
+      <radialGradient id="g-aqua" cx=".35" cy=".3" r=".85"><stop offset="0" stop-color="#D8FFFA"/><stop offset=".42" stop-color="#2DD4C8"/><stop offset="1" stop-color="#06605C"/></radialGradient>
+      <radialGradient id="g-amber" cx=".35" cy=".3" r=".85"><stop offset="0" stop-color="#FFF3D0"/><stop offset=".42" stop-color="#FFB547"/><stop offset="1" stop-color="#9A5000"/></radialGradient>
+      <radialGradient id="g-mag" cx=".35" cy=".3" r=".85"><stop offset="0" stop-color="#FFD9EA"/><stop offset=".42" stop-color="#FF5FA2"/><stop offset="1" stop-color="#8E1650"/></radialGradient>
+      <radialGradient id="g-lime" cx=".35" cy=".3" r=".85"><stop offset="0" stop-color="#F7FFD8"/><stop offset=".42" stop-color="#B7F34A"/><stop offset="1" stop-color="#456F0A"/></radialGradient>
+      <radialGradient id="g-coral" cx=".35" cy=".3" r=".85"><stop offset="0" stop-color="#FFE4DE"/><stop offset=".42" stop-color="#FF7A66"/><stop offset="1" stop-color="#9A2A1A"/></radialGradient>
+      <radialGradient id="g-blue" cx=".35" cy=".3" r=".85"><stop offset="0" stop-color="#E2E9FF"/><stop offset=".42" stop-color="#6F7BFF"/><stop offset="1" stop-color="#23288A"/></radialGradient>
+      <linearGradient id="cy-mag" x1="0" x2="1"><stop offset="0" stop-color="#8E1650"/><stop offset=".32" stop-color="#FF9CC8"/><stop offset=".6" stop-color="#FF5FA2"/><stop offset="1" stop-color="#6A0E3A"/></linearGradient>
+      <linearGradient id="cy-magh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8E1650"/><stop offset=".32" stop-color="#FF9CC8"/><stop offset=".6" stop-color="#FF5FA2"/><stop offset="1" stop-color="#6A0E3A"/></linearGradient>
+      <linearGradient id="cy-aqh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#06605C"/><stop offset=".3" stop-color="#9AFAF0"/><stop offset=".62" stop-color="#2DD4C8"/><stop offset="1" stop-color="#054845"/></linearGradient>
+      <linearGradient id="g-ring" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E6F7F4"/><stop offset=".5" stop-color="#7FB8C6"/><stop offset="1" stop-color="#1B4A5E"/></linearGradient>
+      <radialGradient id="cyto" cx=".45" cy=".4" r=".7"><stop offset="0" stop-color="#7FF2E6" stop-opacity=".5"/><stop offset="1" stop-color="#2DD4C8" stop-opacity=".16"/></radialGradient>
+
+      <symbol id="i-lens" viewBox="0 0 64 64">
+        <ellipse cx="30" cy="60" rx="18" ry="3.5" fill="#000" opacity=".25"/>
+        <rect x="40" y="40" width="9" height="22" rx="4.5" fill="url(#cy-magh)" transform="rotate(-45 44 46)"/>
+        <circle cx="27" cy="27" r="22" fill="url(#g-ring)"/>
+        <circle cx="27" cy="27" r="16.5" fill="#CFFBF5"/>
+        <circle cx="27" cy="27" r="16.5" fill="url(#g-aqua)" opacity=".35"/>
+        <circle cx="22" cy="25" r="3" fill="url(#g-amber)"/><circle cx="31" cy="31" r="2.4" fill="url(#g-mag)"/><circle cx="30" cy="21" r="1.8" fill="url(#g-blue)"/>
+        <ellipse cx="19" cy="15" rx="8" ry="3.4" fill="#fff" opacity=".7" transform="rotate(-35 19 15)"/>
+      </symbol>
+      <symbol id="i-cell" viewBox="0 0 64 64">
+        <ellipse cx="32" cy="59" rx="19" ry="3.6" fill="#000" opacity=".25"/>
+        <circle cx="32" cy="30" r="26" fill="url(#g-aqua)"/>
+        <circle cx="36" cy="33" r="10.5" fill="url(#g-blue)"/>
+        <circle cx="19" cy="23" r="3.4" fill="url(#g-amber)"/><circle cx="23" cy="43" r="3.4" fill="url(#g-amber)"/><circle cx="46" cy="18" r="2.8" fill="url(#g-amber)"/><circle cx="48" cy="44" r="3" fill="url(#g-mag)"/>
+        <ellipse cx="22" cy="13" rx="11" ry="5.2" fill="#fff" opacity=".5" transform="rotate(-28 22 13)"/>
+      </symbol>
+      <symbol id="i-pair" viewBox="0 0 64 64">
+        <ellipse cx="32" cy="59" rx="22" ry="3.4" fill="#000" opacity=".25"/>
+        <circle cx="23" cy="34" r="20" fill="url(#g-amber)"/>
+        <circle cx="42" cy="30" r="17" fill="url(#g-aqua)" opacity=".92"/>
+        <ellipse cx="16" cy="22" rx="8" ry="3.6" fill="#fff" opacity=".55" transform="rotate(-35 16 22)"/>
+        <ellipse cx="38" cy="19" rx="6.5" ry="3" fill="#fff" opacity=".55" transform="rotate(-30 38 19)"/>
+      </symbol>
+      <symbol id="i-ribo" viewBox="0 0 64 64">
+        <ellipse cx="32" cy="60" rx="21" ry="3.6" fill="#000" opacity=".25"/>
+        <circle cx="29" cy="40" r="21" fill="url(#g-amber)"/>
+        <ellipse cx="34" cy="17" rx="15" ry="9" fill="url(#g-coral)"/>
+        <circle cx="52" cy="46" r="3" fill="url(#g-lime)"/><circle cx="57" cy="53" r="2.6" fill="url(#g-lime)"/>
+        <ellipse cx="21" cy="29" rx="9" ry="4.2" fill="#fff" opacity=".5" transform="rotate(-32 21 29)"/>
+        <ellipse cx="28" cy="12" rx="6" ry="2.4" fill="#fff" opacity=".55" transform="rotate(-18 28 12)"/>
+      </symbol>
+      <symbol id="i-cent" viewBox="0 0 64 64">
+        <ellipse cx="32" cy="60" rx="22" ry="3.4" fill="#000" opacity=".25"/>
+        <rect x="32" y="36" width="26" height="15" fill="url(#cy-magh)"/>
+        <ellipse cx="58" cy="43.5" rx="4.4" ry="7.5" fill="url(#g-mag)"/>
+        <rect x="9" y="10" width="24" height="40" fill="url(#cy-mag)"/>
+        <ellipse cx="21" cy="50" rx="12" ry="4.6" fill="#6A0E3A"/>
+        <ellipse cx="21" cy="10" rx="12" ry="4.6" fill="url(#g-mag)"/>
+        <ellipse cx="21" cy="10" rx="8" ry="2.7" fill="#3F0722" opacity=".75"/>
+        <path d="M9 24h24M9 36h24" stroke="#3F0722" stroke-opacity=".35" stroke-width="1.2"/>
+      </symbol>
+      <symbol id="i-mt" viewBox="0 0 64 64">
+        <ellipse cx="32" cy="60" rx="22" ry="3.4" fill="#000" opacity=".25"/>
+        <g transform="rotate(-32 32 32)">
+          <rect x="6" y="21" width="50" height="22" fill="url(#cy-aqh)"/>
+          <ellipse cx="6" cy="32" rx="5.4" ry="11" fill="#054845"/>
+          <ellipse cx="56" cy="32" rx="5.4" ry="11" fill="url(#g-aqua)"/>
+          <ellipse cx="56" cy="32" rx="3" ry="6.4" fill="#03302E" opacity=".8"/>
+          <g fill="#fff" opacity=".4"><circle cx="16" cy="27" r="1.7"/><circle cx="24" cy="31" r="1.7"/><circle cx="32" cy="27" r="1.7"/><circle cx="40" cy="31" r="1.7"/><circle cx="48" cy="27" r="1.7"/><circle cx="20" cy="37" r="1.7"/><circle cx="36" cy="37" r="1.7"/><circle cx="44" cy="36" r="1.7"/></g>
+        </g>
+      </symbol>
+      <symbol id="i-actin" viewBox="0 0 64 64">
+        <ellipse cx="32" cy="60" rx="22" ry="3.4" fill="#000" opacity=".25"/>
+        <g>
+          <circle cx="8" cy="32" r="5.4" fill="url(#g-coral)"/><circle cx="16" cy="23.4" r="5.4" fill="url(#g-amber)"/><circle cx="24" cy="21.3" r="5.4" fill="url(#g-amber)"/><circle cx="32" cy="27.3" r="5.4" fill="url(#g-amber)"/><circle cx="40" cy="36.8" r="5.4" fill="url(#g-amber)"/><circle cx="48" cy="42.8" r="5.4" fill="url(#g-amber)"/><circle cx="56" cy="40.5" r="5.4" fill="url(#g-amber)"/>
+          <circle cx="16" cy="40.6" r="5.4" fill="url(#g-coral)"/><circle cx="24" cy="42.7" r="5.4" fill="url(#g-coral)"/><circle cx="32" cy="36.7" r="5.4" fill="url(#g-coral)"/><circle cx="40" cy="27.2" r="5.4" fill="url(#g-coral)"/><circle cx="48" cy="21.2" r="5.4" fill="url(#g-coral)"/><circle cx="56" cy="23.5" r="5.4" fill="url(#g-coral)"/>
+        </g>
+      </symbol>
+      <symbol id="i-cilia" viewBox="0 0 64 64">
+        <ellipse cx="32" cy="60" rx="18" ry="3.4" fill="#000" opacity=".25"/>
+        <path d="M31 46C28 30 46 26 40 8" fill="none" stroke="url(#g-aqua)" stroke-width="10" stroke-linecap="round"/>
+        <path d="M29 44C26 30 43 26 37 10" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="2.2" stroke-linecap="round"/>
+        <circle cx="31" cy="51" r="8.5" fill="url(#g-mag)"/>
+        <ellipse cx="28" cy="47.5" rx="4" ry="2" fill="#fff" opacity=".6" transform="rotate(-30 28 47.5)"/>
+      </symbol>
+      <symbol id="i-drop" viewBox="0 0 64 64">
+        <ellipse cx="32" cy="60" rx="18" ry="3.4" fill="#000" opacity=".25"/>
+        <path d="M32 4C46 22 54 31 54 42a22 22 0 0 1-44 0C10 31 18 22 32 4Z" fill="url(#g-lime)"/>
+        <circle cx="30" cy="44" r="5" fill="#fff" opacity=".28"/><circle cx="40" cy="36" r="3" fill="#fff" opacity=".28"/>
+        <path d="M20 40c0-6 3-11 7-16" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="3" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="i-list" viewBox="0 0 64 64">
+        <ellipse cx="32" cy="60" rx="20" ry="3.4" fill="#000" opacity=".25"/>
+        <rect x="11" y="6" width="42" height="52" rx="7" fill="url(#g-ring)"/>
+        <rect x="16" y="12" width="32" height="40" rx="4" fill="#E6F7F4"/>
+        <g fill="url(#g-aqua)"><circle cx="22" cy="21" r="3"/><circle cx="22" cy="31" r="3"/><circle cx="22" cy="41" r="3"/></g>
+        <g stroke="#0A2A3A" stroke-opacity=".5" stroke-width="3" stroke-linecap="round"><path d="M29 21h14M29 31h14M29 41h10"/></g>
+      </symbol>
+    </defs>
+  </svg>
+
+  <main id="deck">
+    <!-- 1 -->
+    <section class="slide on" data-icon="i-lens" data-label="Kirish" data-field="68,48,86" aria-label="Sarlavha">
+      <div class="wrap">
+        <div class="g r" style="--i:0;max-width:880px">
+          <p class="tag">Biologiya · Hujayra tuzilishi</p>
+          <h1>Sitoplazma va hujayraning membranasiz organoidlari</h1>
+          <p class="lead" style="margin-top:16px">Hujayra ichidagi shaffof dunyo: ribosomalar, sentriolalar, mikronaychalar, mikroiplar va kiprikchalar. 3D modellarni suring, aylantiring va ichiga qarang.</p>
+          <div class="icrow">
+            <div class="icitem float"><svg class="ic lg"><use href="#i-ribo"/></svg>Ribosoma</div>
+            <div class="icitem float"><svg class="ic lg"><use href="#i-cent"/></svg>Hujayra markazi</div>
+            <div class="icitem float"><svg class="ic lg"><use href="#i-mt"/></svg>Mikronaychalar</div>
+            <div class="icitem float"><svg class="ic lg"><use href="#i-actin"/></svg>Mikroiplar</div>
+            <div class="icitem float"><svg class="ic lg"><use href="#i-cilia"/></svg>Kiprikcha</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="slide" data-icon="i-cell" data-label="Sitoplazma" data-field="30,52,92" aria-label="Sitoplazma nima">
+      <div class="wrap">
+        <header class="head g r" style="--i:0">
+          <svg class="ic"><use href="#i-cell"/></svg>
+          <div><p class="tag">Hujayraning ichki muhiti</p><h2>Sitoplazma nima?</h2></div>
+        </header>
+        <div class="split">
+          <div class="info">
+            <div class="g r" style="--i:1">
+              <p>Sitoplazma hujayra membranasi bilan yadro oralig‘ini to‘ldirgan yarim suyuq muhit. Uning asosiy moddasi <span class="key">gialoplazma</span> (sitozol) deyiladi.</p>
+              <ul class="list" style="margin-top:14px">
+                <li>Asosan suvdan iborat (taxminan 70–80%), qolgani oqsil, uglevod, lipid, nuklein kislota va mineral tuzlar.</li>
+                <li>Kolloid eritma: tinch holatda quyuq (gel), harakatda suyuqroq (zol).</li>
+                <li>Doimiy harakatda bo‘lib, organoidlarni joyidan joyga olib yuradi.</li>
+                <li>Glikoliz kabi ko‘p reaksiyalar aynan shu yerda boradi.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="g r" style="--i:2;display:grid;place-items:center">
+            <svg class="celldiag" viewBox="0 0 520 400" role="img" aria-label="Hayvon hujayrasi sxemasi: sitoplazma, yadro, ribosomalar, hujayra markazi, mitoxondriya">
+              <defs>
+                <radialGradient id="nuc" cx=".38" cy=".32" r=".8"><stop offset="0" stop-color="#E2E9FF"/><stop offset=".4" stop-color="#6F7BFF"/><stop offset="1" stop-color="#23288A"/></radialGradient>
+              </defs>
+              <path d="M260 24C400 20 494 100 494 200C494 312 394 380 262 378C120 378 26 306 28 196C30 96 120 28 260 24Z" fill="url(#cyto)" stroke="#fff" stroke-opacity=".75" stroke-width="4"/>
+              <path d="M260 34C392 30 484 106 484 200C484 304 388 370 262 368C128 368 38 300 38 196C40 104 126 38 260 34Z" fill="none" stroke="#9AFAF0" stroke-opacity=".35" stroke-width="1.5" stroke-dasharray="3 7"/>
+              <g stroke="#9AFAF0" stroke-opacity=".5" stroke-width="2" stroke-linecap="round" fill="none">
+                <path d="M392 118C430 96 460 82 478 70"/><path d="M392 118C440 120 466 130 488 140"/><path d="M392 118C420 150 440 176 452 206"/><path d="M392 118C380 92 372 70 366 48"/><path d="M392 118C352 100 330 88 308 60"/>
+              </g>
+              <g>
+                <ellipse cx="148" cy="296" rx="38" ry="17" fill="url(#g-coral)" transform="rotate(-24 148 296)"/>
+                <path d="M120 300q8-12 14 0t14 0 14 0" fill="none" stroke="#7A1F12" stroke-opacity=".6" stroke-width="2" transform="rotate(-24 148 296)"/>
+                <ellipse cx="364" cy="300" rx="34" ry="15" fill="url(#g-coral)" transform="rotate(18 364 300)"/>
+                <path d="M338 302q7-11 13 0t13 0 13 0" fill="none" stroke="#7A1F12" stroke-opacity=".6" stroke-width="2" transform="rotate(18 364 300)"/>
+              </g>
+              <circle cx="238" cy="198" r="74" fill="url(#nuc)"/>
+              <circle cx="238" cy="198" r="74" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="2.5"/>
+              <circle cx="224" cy="190" r="19" fill="url(#g-lime)"/>
+              <ellipse cx="206" cy="152" rx="26" ry="11" fill="#fff" opacity=".4" transform="rotate(-24 206 152)"/>
+              <g fill="none" stroke="#B9B2FF" stroke-opacity=".75" stroke-width="7" stroke-linecap="round">
+                <path d="M322 168c26-10 38 4 54-2"/><path d="M324 186c26-8 40 6 58 0"/><path d="M322 204c28-8 38 8 58 2"/>
+              </g>
+              <g fill="url(#g-amber)">
+                <circle cx="330" cy="164" r="4.2"/><circle cx="346" cy="162" r="4.2"/><circle cx="364" cy="166" r="4.2"/><circle cx="338" cy="182" r="4.2"/><circle cx="356" cy="184" r="4.2"/><circle cx="372" cy="182" r="4.2"/><circle cx="334" cy="200" r="4.2"/><circle cx="352" cy="203" r="4.2"/>
+                <circle cx="120" cy="150" r="4.2"/><circle cx="102" cy="190" r="4.2"/><circle cx="126" cy="236" r="4.2"/><circle cx="196" cy="300" r="4.2"/><circle cx="256" cy="316" r="4.2"/><circle cx="300" cy="286" r="4.2"/><circle cx="420" cy="238" r="4.2"/><circle cx="176" cy="92" r="4.2"/><circle cx="286" cy="86" r="4.2"/><circle cx="436" cy="190" r="4.2"/><circle cx="84" cy="236" r="4.2"/><circle cx="420" cy="296" r="4.2"/>
+              </g>
+              <g transform="translate(392 118)">
+                <rect x="-6" y="-15" width="12" height="26" rx="3" fill="url(#cy-mag)"/><rect x="2" y="2" width="24" height="12" rx="3" fill="url(#cy-magh)"/>
+              </g>
+              <g font-family="Instrument Sans,Segoe UI,sans-serif" font-size="15" font-weight="600" fill="#fff" stroke="#04131D" stroke-opacity=".75" stroke-width="4" paint-order="stroke" stroke-linejoin="round">
+                <text x="86" y="120" text-anchor="start" fill="#B7F34A">Sitoplazma</text>
+                <text x="206" y="278">Yadro</text>
+                <text x="332" y="148" fill="#FFB547">Ribosomalar</text>
+                <text x="404" y="100" fill="#FF9CC8">Hujayra markazi</text>
+                <text x="100" y="332" fill="#FFA797">Mitoxondriya</text>
+              </g>
+              <path d="M130 124C150 140 150 150 118 152" fill="none" stroke="#B7F34A" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="slide" data-icon="i-pair" data-label="Ikki guruh" data-field="50,60,70" aria-label="Membranali va membranasiz organoidlar">
+      <div class="wrap">
+        <header class="head g r" style="--i:0">
+          <svg class="ic"><use href="#i-pair"/></svg>
+          <div><p class="tag">Taqqoslash</p><h2>Ikki guruh organoidlar</h2></div>
+        </header>
+        <div class="cols">
+          <div class="g r" style="--i:1">
+            <h3 class="key">Membranasiz organoidlar</h3>
+            <p style="margin-bottom:12px">Ichki bo‘shlig‘i yo‘q, oqsil va RNKdan qurilgan, sitoplazmada erkin joylashadi.</p>
+            <ul class="list">
+              <li class="tdi" style="padding-left:0"><svg class="ic sm"><use href="#i-ribo"/></svg>Ribosomalar</li>
+              <li class="tdi" style="padding-left:0"><svg class="ic sm"><use href="#i-cent"/></svg>Hujayra markazi (sentriolalar)</li>
+              <li class="tdi" style="padding-left:0"><svg class="ic sm"><use href="#i-mt"/></svg>Mikronaychalar</li>
+              <li class="tdi" style="padding-left:0"><svg class="ic sm"><use href="#i-actin"/></svg>Mikroiplar va oraliq iplar</li>
+              <li class="tdi" style="padding-left:0"><svg class="ic sm"><use href="#i-cilia"/></svg>Kiprikcha va xivchinlar aksonemasi</li>
+            </ul>
+          </div>
+          <div class="gl r" style="--i:2">
+            <h3 class="rose">Membranali organoidlar</h3>
+            <p style="margin-bottom:12px">Bir yoki ikki qavat membrana bilan o‘ralgan, ichida bo‘limlari bor.</p>
+            <ul class="list">
+              <li><b>Ikki membranali:</b> yadro, mitoxondriya, plastidalar.</li>
+              <li><b>Bir membranali:</b> endoplazmatik to‘r, Golji kompleksi, lizosomalar, vakuolalar.</li>
+              <li>Membrana ichki muhitni sitoplazmadan ajratib, alohida reaksiyalar o‘tkazishga imkon beradi.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="slide" data-scene="ribo" data-icon="i-ribo" data-label="Ribosoma" data-field="30,50,78" aria-label="Ribosoma">
+      <div class="wrap">
+        <header class="head g r" style="--i:0">
+          <svg class="ic"><use href="#i-ribo"/></svg>
+          <div><p class="tag">Oqsil fabrikasi</p><h2>Ribosoma</h2></div>
+        </header>
+        <div class="split">
+          <div class="info">
+            <div class="g r" style="--i:1">
+              <ul class="list">
+                <li>Ikki subbirlikdan iborat: <span class="key">katta</span> va <span class="key">kichik</span>. Ular rRNK va oqsildan tuzilgan.</li>
+                <li>Eukariotlarda 80S (60S + 40S), prokariotlarda 70S (50S + 30S).</li>
+                <li>Subbirliklar yadrochada hosil bo‘ladi, sitoplazmada mRNK ustida birlashadi.</li>
+                <li>Erkin yoki donador endoplazmatik to‘rga birikkan holda oqsil sintezlaydi (translyatsiya).</li>
+              </ul>
+            </div>
+            <div class="chips r" style="--i:2"><span class="chip">⌀ ≈ 20–30 nm</span><span class="chip">Membranasiz</span><span class="chip">rRNK + oqsil</span></div>
+          </div>
+          <div class="stage r" style="--i:2" data-stage>
+            <div class="hots"></div>
+            <div class="nogl">3D ko‘rinish bu qurilmada ishlamadi. Chap tomondagi tavsif va ikonlardan foydalaning.</div>
+            <div class="tools"><span class="hint">Aylantirish uchun suring</span><div class="btns"><button class="tb" type="button" data-act="ghost" aria-pressed="false">Shaffof ko‘rinish</button><button class="tb" type="button" data-act="reset">Boshlang‘ich holat</button></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="slide" data-scene="cent" data-icon="i-cent" data-label="Hujayra markazi" data-field="72,52,78" aria-label="Hujayra markazi">
+      <div class="wrap">
+        <header class="head g r" style="--i:0">
+          <svg class="ic"><use href="#i-cent"/></svg>
+          <div><p class="tag">Bo‘linish markazi</p><h2>Hujayra markazi (sentriolalar)</h2></div>
+        </header>
+        <div class="split">
+          <div class="info">
+            <div class="g r" style="--i:1">
+              <ul class="list">
+                <li>Ikkita sentriola o‘zaro to‘g‘ri burchak ostida joylashadi (diplosoma).</li>
+                <li>Har biri silindr: <span class="key">9 ta uchtalik</span> mikronaychadan tuzilgan (9 × 3).</li>
+                <li>Uzunligi taxminan 0,3–0,5 µm, diametri taxminan 0,2 µm.</li>
+                <li>Hujayra bo‘linishida urchuq iplarini hosil qiladi. Yuksak o‘simliklarda sentriola bo‘lmaydi.</li>
+              </ul>
+            </div>
+            <div class="chips r" style="--i:2"><span class="chip">9 × 3</span><span class="chip">Hayvon hujayralarida</span><span class="chip">Membranasiz</span></div>
+          </div>
+          <div class="stage r" style="--i:2" data-stage>
+            <div class="hots"></div>
+            <div class="nogl">3D ko‘rinish bu qurilmada ishlamadi. Chap tomondagi tavsif va ikonlardan foydalaning.</div>
+            <div class="tools"><span class="hint">Aylantirish uchun suring</span><div class="btns"><button class="tb" type="button" data-act="ghost" aria-pressed="false">Shaffof ko‘rinish</button><button class="tb" type="button" data-act="reset">Boshlang‘ich holat</button></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section class="slide" data-scene="mt" data-icon="i-mt" data-label="Mikronaychalar" data-field="70,48,84" aria-label="Mikronaychalar">
+      <div class="wrap">
+        <header class="head g r" style="--i:0">
+          <svg class="ic"><use href="#i-mt"/></svg>
+          <div><p class="tag">Sitoskelet · tayanch naylar</p><h2>Mikronaychalar</h2></div>
+        </header>
+        <div class="split">
+          <div class="info">
+            <div class="g r" style="--i:1">
+              <ul class="list">
+                <li>Ichi kovak silindr: tashqi diametri taxminan 25 nm, uzunligi bir necha µm.</li>
+                <li>13 ta protofilamentdan iborat. Ular <span class="key">α- va β-tubulin</span> dimerlaridan quriladi.</li>
+                <li>Ikki uchi bor: plyus (+) uchi tez o‘sadi va qisqaradi, minus (−) uchi sekin.</li>
+                <li>Vazifasi: hujayra shaklini saqlash, kinezin orqali yuk tashish, bo‘linishda xromosomalarni tortish.</li>
+              </ul>
+            </div>
+            <div class="chips r" style="--i:2"><span class="chip">⌀ ≈ 25 nm</span><span class="chip">Tubulin oqsili</span><span class="chip">Membranasiz</span></div>
+          </div>
+          <div class="stage r" style="--i:2" data-stage>
+            <div class="hots"></div>
+            <div class="nogl">3D ko‘rinish bu qurilmada ishlamadi. Chap tomondagi tavsif va ikonlardan foydalaning.</div>
+            <div class="tools"><span class="hint">Aylantirish uchun suring</span><div class="btns"><button class="tb" type="button" data-act="ghost" aria-pressed="false">Shaffof ko‘rinish</button><button class="tb" type="button" data-act="reset">Boshlang‘ich holat</button></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section class="slide" data-scene="fil" data-icon="i-actin" data-label="Mikroiplar" data-field="28,54,80" aria-label="Mikroiplar va oraliq iplar">
+      <div class="wrap">
+        <header class="head g r" style="--i:0">
+          <svg class="ic"><use href="#i-actin"/></svg>
+          <div><p class="tag">Sitoskelet · uch xil ip</p><h2>Mikroiplar va oraliq iplar</h2></div>
+        </header>
+        <div class="split">
+          <div class="info">
+            <div class="g r" style="--i:1">
+              <ul class="list">
+                <li><span class="key">Mikroiplar (aktin):</span> G-aktin sharchalaridan ikki qatorli spiral, diametri taxminan 7 nm.</li>
+                <li>Mushak qisqarishi, amyobasimon harakat, hujayra bo‘linishining oxirgi bosqichi va hujayra shakli ularga bog‘liq.</li>
+                <li><span class="key">Oraliq iplar:</span> arqonsimon, diametri taxminan 10 nm, mustahkamlik beradi (masalan, keratin).</li>
+                <li>Mikronaychalar, oraliq iplar va mikroiplar birgalikda sitoskeletni hosil qiladi.</li>
+              </ul>
+            </div>
+            <div class="chips r" style="--i:2"><span class="chip">7 nm</span><span class="chip">10 nm</span><span class="chip">25 nm</span><span class="chip">Masshtab saqlangan</span></div>
+          </div>
+          <div class="stage r" style="--i:2" data-stage>
+            <div class="hots"></div>
+            <div class="nogl">3D ko‘rinish bu qurilmada ishlamadi. Chap tomondagi tavsif va ikonlardan foydalaning.</div>
+            <div class="tools"><span class="hint">Aylantirish uchun suring</span><div class="btns"><button class="tb" type="button" data-act="ghost" aria-pressed="false">Shaffof ko‘rinish</button><button class="tb" type="button" data-act="reset">Boshlang‘ich holat</button></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 -->
+    <section class="slide" data-scene="cilium" data-icon="i-cilia" data-label="Kiprikcha" data-field="72,50,76" aria-label="Kiprikchalar va xivchinlar">
+      <div class="wrap">
+        <header class="head g r" style="--i:0">
+          <svg class="ic"><use href="#i-cilia"/></svg>
+          <div><p class="tag">Harakat organoidlari</p><h2>Kiprikchalar va xivchinlar</h2></div>
+        </header>
+        <div class="split">
+          <div class="info">
+            <div class="g r" style="--i:1">
+              <ul class="list">
+                <li>Kiprikchalar qisqa (taxminan 5–10 µm) va ko‘p, xivchinlar uzun va 1–2 ta.</li>
+                <li>Ichki o‘zagi <span class="key">aksonema</span>: 9 juft chetki + 2 markaziy mikronaycha (9 + 2).</li>
+                <li>Dinein «dastalari» qo‘shni juftlarni siljitadi, natijada o‘simta egiladi.</li>
+                <li>Asosida sentriolaga o‘xshash bazal tana (9 × 3) turadi.</li>
+                <li>Tashqarisini plazmatik membrana qoplaydi, aksonemaning o‘zi esa membranasiz.</li>
+              </ul>
+            </div>
+            <div class="chips r" style="--i:2"><span class="chip">9 + 2</span><span class="chip">Infuzoriya, evglena, spermatozoid</span></div>
+          </div>
+          <div class="stage r" style="--i:2" data-stage>
+            <div class="hots"></div>
+            <div class="nogl">3D ko‘rinish bu qurilmada ishlamadi. Chap tomondagi tavsif va ikonlardan foydalaning.</div>
+            <div class="tools"><span class="hint">Aylantirish uchun suring</span><div class="btns"><button class="tb" type="button" data-act="ghost" aria-pressed="false">Shaffof ko‘rinish</button><button class="tb" type="button" data-act="reset">Boshlang‘ich holat</button></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9 -->
+    <section class="slide" data-icon="i-drop" data-label="Tomchilar" data-field="34,56,86" aria-label="Fazaviy ajralish">
+      <div class="wrap">
+        <header class="head g r" style="--i:0">
+          <svg class="ic"><use href="#i-drop"/></svg>
+          <div><p class="tag">Zamonaviy qarash</p><h2>Tomchi kabi organoidlar</h2></div>
+        </header>
+        <div class="split">
+          <div class="info">
+            <div class="g r" style="--i:1">
+              <p>Oxirgi yillarda hujayrada oqsil va RNKdan tashkil topgan membranasiz <span class="key">kondensatlar</span> topildi. Ular suv va yog‘ning ajralishiga o‘xshab, suyuq tomchi shaklida hosil bo‘ladi. Bu jarayon fazaviy ajralish deyiladi.</p>
+              <ul class="list" style="margin-top:14px">
+                <li>Misollar: yadrocha (yadroda), P-tanachalar va stress-granulalar (sitoplazmada).</li>
+                <li>Tomchilar bir-biriga qo‘shilib ketishi mumkin.</li>
+                <li>Membrana yo‘q, lekin tarkibi o‘z chegarasini saqlaydi.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="g r drops" style="--i:2" aria-hidden="true">
+            <div class="drop" style="left:8%;top:14%;width:150px;height:150px"></div>
+            <div class="drop" style="left:38%;top:42%;width:190px;height:190px;animation-delay:-2s"></div>
+            <div class="drop" style="left:66%;top:8%;width:110px;height:110px;animation-delay:-4s"></div>
+            <div class="drop" style="left:18%;top:62%;width:90px;height:90px;animation-delay:-1s"></div>
+            <div class="drop" style="left:74%;top:60%;width:130px;height:130px;animation-delay:-3s"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10 -->
+    <section class="slide" data-icon="i-list" data-label="Xulosa" data-field="52,40,100" aria-label="Xulosa jadvali">
+      <div class="wrap">
+        <header class="head g r" style="--i:0">
+          <svg class="ic"><use href="#i-list"/></svg>
+          <div><p class="tag">Xulosa</p><h2>Membranasiz organoidlar jadvali</h2></div>
+        </header>
+        <div class="gl tbl r" style="--i:1">
+          <table>
+            <thead><tr><th>Organoid</th><th>Tuzilishi</th><th>Vazifasi</th></tr></thead>
+            <tbody>
+              <tr><td><span class="tdi"><svg class="ic sm"><use href="#i-ribo"/></svg>Ribosoma</span></td><td>Katta va kichik subbirlik (rRNK + oqsil)</td><td>Oqsil sintezi</td></tr>
+              <tr><td><span class="tdi"><svg class="ic sm"><use href="#i-cent"/></svg>Hujayra markazi</span></td><td>Ikkita sentriola, har biri 9 × 3 mikronaycha</td><td>Urchuq iplarini hosil qilish</td></tr>
+              <tr><td><span class="tdi"><svg class="ic sm"><use href="#i-mt"/></svg>Mikronaycha</span></td><td>Tubulindan kovak silindr, ⌀ ≈ 25 nm</td><td>Shakl, transport, xromosomalar harakati</td></tr>
+              <tr><td><span class="tdi"><svg class="ic sm"><use href="#i-actin"/></svg>Mikroip</span></td><td>Aktin spirali, ⌀ ≈ 7 nm</td><td>Qisqarish, harakat, shakl</td></tr>
+              <tr><td><span class="tdi"><svg class="ic sm"><use href="#i-cilia"/></svg>Kiprikcha, xivchin</span></td><td>Aksonema 9 + 2, bazal tana</td><td>Hujayraning siljishi</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="g r" style="--i:2;align-self:flex-start;font-family:var(--display);font-weight:600">Savollar bormi? E’tiboringiz uchun rahmat.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <nav class="bar" aria-label="Slayd boshqaruvi">
+    <button class="nb" id="prev" type="button" aria-label="Oldingi slayd"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <div class="nav" id="nav" role="group" aria-label="Slaydlar"></div>
+    <div class="cnt" aria-live="polite" id="cnt"></div>
+    <button class="nb" id="next" type="button" aria-label="Keyingi slayd"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+  </nav>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+'use strict';
+var TAU=Math.PI*2;
+var H=window.H={scenes:{}};
+
+/* ---------- procedural helpers ---------- */
+function hash(x,y,z){var h=Math.sin(x*127.1+y*311.7+z*74.7)*43758.5453;return h-Math.floor(h)}
+function L(a,b,t){return a+(b-a)*t}
+function sm(t){return t*t*(3-2*t)}
+function vnoise(x,y,z){
+  var xi=Math.floor(x),yi=Math.floor(y),zi=Math.floor(z),u=sm(x-xi),v=sm(y-yi),w=sm(z-zi);
+  return L(L(L(hash(xi,yi,zi),hash(xi+1,yi,zi),u),L(hash(xi,yi+1,zi),hash(xi+1,yi+1,zi),u),v),
+           L(L(hash(xi,yi,zi+1),hash(xi+1,yi,zi+1),u),L(hash(xi,yi+1,zi+1),hash(xi+1,yi+1,zi+1),u),v),w);
+}
+H.fbm=function(x,y,z){return vnoise(x,y,z)*.55+vnoise(x*2.1,y*2.1,z*2.1)*.3+vnoise(x*4.3,y*4.3,z*4.3)*.15};
+H.rnd=function(s){var x=Math.sin(s*999.31+1.7)*10000;return x-Math.floor(x)};
+
+/* smooth lumpy ellipsoid with analytic normals (protein-surface look) */
+H.lumpy=function(o){
+  var seg=o.seg||56,g=new THREE.SphereGeometry(1,seg,Math.round(seg*.7));
+  var p=g.attributes.position,nr=g.attributes.normal,v=new THREE.Vector3(),n3=new THREE.Vector3(),e=.012;
+  var sx=o.sx||1,sy=o.sy||1,sz=o.sz||1,r=o.r||1,amp=o.amp==null?.22:o.amp,fr=o.freq||1.7,sd=o.seed||0;
+  function D(x,y,z){var l=Math.sqrt(x*x+y*y+z*z)||1e-6;return r*(1+(H.fbm(x/l*fr+sd,y/l*fr+sd*1.7,z/l*fr+sd*2.3)-.5)*amp)}
+  function F(x,y,z){return Math.sqrt(x*x+y*y+z*z)-D(x,y,z)}
+  for(var i=0;i<p.count;i++){
+    v.fromBufferAttribute(p,i).normalize();
+    var d=D(v.x,v.y,v.z),x=v.x*d,y=v.y*d,z=v.z*d;
+    n3.set((F(x+e,y,z)-F(x-e,y,z))/sx,(F(x,y+e,z)-F(x,y-e,z))/sy,(F(x,y,z+e)-F(x,y,z-e))/sz).normalize();
+    p.setXYZ(i,x*sx,y*sy,z*sz);nr.setXYZ(i,n3.x,n3.y,n3.z);
+  }
+  p.needsUpdate=true;nr.needsUpdate=true;return g;
+};
+H.mat=function(color,o){
+  var m=new THREE.MeshPhysicalMaterial(Object.assign({color:color,roughness:.32,metalness:0,clearcoat:.85,clearcoatRoughness:.22,envMapIntensity:.85},o||{}));
+  return m;
+};
+H.tube=function(pts,r,seg,closed){return new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts,!!closed),seg||64,r,10,!!closed)};
+H.tubTex=function(){
+  var c=document.createElement('canvas');c.width=c.height=128;var x=c.getContext('2d');
+  x.fillStyle='#707070';x.fillRect(0,0,128,128);
+  for(var i=0;i<8;i++)for(var j=0;j<8;j++){
+    var cx=i*16+8,cy=j*16+8+(i%2)*3,g=x.createRadialGradient(cx,cy,0,cx,cy,8);
+    g.addColorStop(0,'#fff');g.addColorStop(1,'#707070');x.fillStyle=g;x.beginPath();x.arc(cx,cy,8,0,TAU);x.fill();
+  }
+  var t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;return t;
+};
+var spriteTex=null;
+H.sprite=function(){
+  if(spriteTex) return spriteTex;
+  var c=document.createElement('canvas');c.width=c.height=64;var x=c.getContext('2d');
+  var g=x.createRadialGradient(32,32,0,32,32,32);g.addColorStop(0,'rgba(255,255,255,1)');g.addColorStop(.35,'rgba(255,255,255,.45)');g.addColorStop(1,'rgba(255,255,255,0)');
+  x.fillStyle=g;x.fillRect(0,0,64,64);spriteTex=new THREE.CanvasTexture(c);return spriteTex;
+};
+H.dust=function(parent,n,sx,sy,sz,color,size){
+  var pos=new Float32Array(n*3),i;
+  for(i=0;i<n;i++){pos[i*3]=(Math.random()-.5)*sx;pos[i*3+1]=(Math.random()-.5)*sy;pos[i*3+2]=(Math.random()-.5)*sz}
+  var g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  var m=new THREE.PointsMaterial({color:color,size:size||.07,map:H.sprite(),transparent:true,opacity:.6,depthWrite:false,blending:THREE.AdditiveBlending});
+  m.userData.noghost=true;
+  var pts=new THREE.Points(g,m);parent.add(pts);
+  return function(t){pts.rotation.y=t*.02;pts.position.y=Math.sin(t*.3)*.08};
+};
+H.makeEnv=function(rd){
+  var c=document.createElement('canvas');c.width=1024;c.height=512;var x=c.getContext('2d');
+  var g=x.createLinearGradient(0,0,0,512);g.addColorStop(0,'#9fd2d4');g.addColorStop(.45,'#2f6f82');g.addColorStop(.55,'#0e3d50');g.addColorStop(1,'#020b12');
+  x.fillStyle=g;x.fillRect(0,0,1024,512);
+  function box(cx,cy,w,h,col,a){var gg=x.createRadialGradient(cx,cy,0,cx,cy,Math.max(w,h));gg.addColorStop(0,col);gg.addColorStop(1,'rgba(255,255,255,0)');x.globalAlpha=a;x.fillStyle=gg;x.fillRect(cx-w*1.6,cy-h*1.6,w*3.2,h*3.2);x.globalAlpha=1}
+  box(250,140,150,70,'#ffffff',1);box(770,120,120,60,'#aef5ec',.9);box(520,330,220,50,'#ffd9a0',.5);box(920,300,90,90,'#ff9fcf',.55);box(80,300,100,60,'#9db6ff',.5);
+  var t=new THREE.CanvasTexture(c);t.mapping=THREE.EquirectangularReflectionMapping;t.encoding=THREE.sRGBEncoding;
+  var pm=new THREE.PMREMGenerator(rd);var rt=pm.fromEquirectangular(t);t.dispose();pm.dispose();return rt.texture;
+};
+H.newScene=function(env,o){
+  o=o||{};
+  var scene=new THREE.Scene();scene.environment=env;
+  var cam=new THREE.PerspectiveCamera(o.fov||32,1,.1,100);cam.position.set(0,o.cy||0,o.z||9);cam.lookAt(0,o.ty||0,0);
+  scene.add(new THREE.HemisphereLight(0xcdf6f2,0x0a2230,.32));
+  var k=new THREE.DirectionalLight(0xffffff,1.25);k.position.set(3,4,5);scene.add(k);
+  var rim=new THREE.DirectionalLight(0x6fe9ff,1.1);rim.position.set(-4,2,-3);scene.add(rim);
+  var warm=new THREE.DirectionalLight(0xffb86b,.4);warm.position.set(2,-3,2);scene.add(warm);
+  var rig=new THREE.Group(),root=new THREE.Group();rig.add(root);scene.add(rig);
+  return {scene:scene,camera:cam,rig:rig,root:root,hot:[],update:function(){},base:{rx:o.rx==null?.12:o.rx,ry:o.ry==null?-.4:o.ry},
+          spin:o.spin==null?.12:o.spin,sway:o.sway||0,z0:o.z||9,fit:o.fit||1.4,u:{rx:0,ry:0,vy:0}};
+};
+H.setGhost=function(root,on){
+  root.traverse(function(o){
+    var ms=o.material;if(!ms) return;ms=Array.isArray(ms)?ms:[ms];
+    ms.forEach(function(m){
+      if(m.userData.noghost) return;
+      if(m.userData.op0==null){m.userData.op0=m.opacity;m.userData.t0=m.transparent;m.userData.dw0=m.depthWrite}
+      m.transparent=on?true:m.userData.t0;m.opacity=on?m.userData.op0*.3:m.userData.op0;m.depthWrite=on?false:m.userData.dw0;m.needsUpdate=true;
+    });
+  });
+};
+
+/* ---------- deck UI ---------- */
+var slides=[].slice.call(document.querySelectorAll('.slide')),N=slides.length,cur=-1;
+var field=document.getElementById('field'),orbs=[].slice.call(document.querySelectorAll('.orb'));
+var nav=document.getElementById('nav'),cnt=document.getElementById('cnt');
+var prev=document.getElementById('prev'),next=document.getElementById('next');
+var reduce=!!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
+var navBtns=slides.map(function(s,i){
+  var b=document.createElement('button');b.type='button';b.className='nv';b.setAttribute('aria-label',(i+1)+'. '+s.dataset.label);b.title=s.dataset.label;
+  b.innerHTML='<svg class="ic sm" aria-hidden="true"><use href="#'+s.dataset.icon+'"/></svg>';
+  b.addEventListener('click',function(){go(i)});nav.appendChild(b);return b;
+});
+function go(n){
+  n=Math.max(0,Math.min(N-1,n));if(n===cur) return;cur=n;
+  slides.forEach(function(s,i){s.classList.toggle('on',i===n);s.setAttribute('aria-hidden',i===n?'false':'true');try{s.inert=(i!==n)}catch(e){}});
+  slides[n].scrollTop=0;
+  var f=(slides[n].dataset.field||'60,50,80').split(',');
+  field.style.left=f[0]+'%';field.style.top=f[1]+'%';field.style.width=f[2]+'vmax';field.style.height=f[2]+'vmax';
+  orbs.forEach(function(o,k){o.style.left=(50+46*Math.sin(n*.9+k*2.1))+'%';o.style.top=(50+42*Math.cos(n*.7+k*1.7))+'%'});
+  navBtns.forEach(function(b,i){if(i===n) b.setAttribute('aria-current','true');else b.removeAttribute('aria-current')});
+  cnt.textContent=(n+1)+' / '+N;prev.disabled=(n===0);next.disabled=(n===N-1);
+  try{history.replaceState(null,'','#'+(n+1))}catch(e){}
+  if(H.activate) H.activate(slides[n]);
+}
+H.go=go;H.slides=slides;H.cur=function(){return cur};H.reduce=reduce;
+prev.addEventListener('click',function(){go(cur-1)});
+next.addEventListener('click',function(){go(cur+1)});
+document.addEventListener('keydown',function(e){
+  var k=e.key,btn=e.target&&e.target.tagName==='BUTTON';
+  if(k==='ArrowRight'||k==='PageDown'||(k===' '&&!btn)){e.preventDefault();go(cur+1)}
+  else if(k==='ArrowLeft'||k==='PageUp'){e.preventDefault();go(cur-1)}
+  else if(k==='Home')go(0);else if(k==='End')go(N-1);
+});
+var tx=0,ty=0,tIn=false;
+document.addEventListener('touchstart',function(e){tIn=!!e.target.closest('.stage');tx=e.touches[0].clientX;ty=e.touches[0].clientY},{passive:true});
+document.addEventListener('touchend',function(e){
+  if(tIn) return;var dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;
+  if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.5) go(cur+(dx<0?1:-1));
+},{passive:true});
+
+/* ---------- drifting vesicles (2D backdrop) ---------- */
+var dc=document.getElementById('drift'),dx=dc.getContext('2d'),dots=[],DW=0,DH=0;
+function dsize(){var r=Math.min(window.devicePixelRatio||1,1.5);DW=dc.clientWidth;DH=dc.clientHeight;dc.width=DW*r;dc.height=DH*r;dx.setTransform(r,0,0,r,0,0)}
+function dinit(){dsize();dots=[];for(var i=0;i<46;i++)dots.push({x:Math.random()*DW,y:Math.random()*DH,r:3+Math.random()*16,a:Math.random()*TAU,s:6+Math.random()*14,ph:Math.random()*TAU})}
+function ddraw(dt,t){
+  dx.clearRect(0,0,DW,DH);
+  dots.forEach(function(d){
+    if(!reduce){d.a+=Math.sin(t*.5+d.ph)*dt*.6;d.x+=Math.cos(d.a)*d.s*dt;d.y+=Math.sin(d.a)*d.s*dt;
+      if(d.x<-30)d.x=DW+30;if(d.x>DW+30)d.x=-30;if(d.y<-30)d.y=DH+30;if(d.y>DH+30)d.y=-30}
+    var g=dx.createRadialGradient(d.x-d.r*.3,d.y-d.r*.3,0,d.x,d.y,d.r);
+    g.addColorStop(0,'rgba(255,255,255,.55)');g.addColorStop(.5,'rgba(45,212,200,.16)');g.addColorStop(1,'rgba(45,212,200,.04)');
+    dx.fillStyle=g;dx.beginPath();dx.arc(d.x,d.y,d.r,0,TAU);dx.fill();
+    dx.strokeStyle='rgba(255,255,255,.28)';dx.lineWidth=1;dx.stroke();
+  });
+}
+window.addEventListener('resize',dsize);
+
+/* ---------- WebGL stage ---------- */
+var R=null,failed=false,S=null,stageEl=null,hotEls=[],ro=null;
+function initGL(){
+  if(R||failed) return R;
+  if(!window.THREE){failed=true;return null}
+  try{
+    var rd=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'high-performance'});
+    rd.setClearColor(0x000000,0);rd.outputEncoding=THREE.sRGBEncoding;rd.toneMapping=THREE.ACESFilmicToneMapping;rd.toneMappingExposure=.82;
+    R={rd:rd,env:H.makeEnv(rd)};
+  }catch(e){failed=true;R=null}
+  return R;
+}
+function resize(){
+  if(!R||!S||!stageEl) return;
+  var w=stageEl.clientWidth,h=stageEl.clientHeight;if(!w||!h) return;
+  R.rd.setPixelRatio(Math.min(window.devicePixelRatio||1,2));R.rd.setSize(w,h,false);
+  S.camera.aspect=w/h;S.camera.position.z=S.z0*Math.max(1,S.fit/(w/h));S.camera.updateProjectionMatrix();
+}
+function bindStage(st){
+  if(st._bound) return;st._bound=true;
+  var down=false,lx=0,ly=0;
+  st.addEventListener('pointerdown',function(e){
+    if(e.target.closest('.btns')) return;down=true;lx=e.clientX;ly=e.clientY;st.classList.add('drag');
+    try{st.setPointerCapture(e.pointerId)}catch(x){}
+  });
+  st.addEventListener('pointermove',function(e){
+    if(!down||!S) return;var ddx=e.clientX-lx,ddy=e.clientY-ly;lx=e.clientX;ly=e.clientY;
+    S.u.ry+=ddx*.008;S.u.vy=ddx*.0012;S.u.rx=Math.max(-1.1,Math.min(1.1,S.u.rx+ddy*.006));
+  });
+  function up(){down=false;st.classList.remove('drag')}
+  st.addEventListener('pointerup',up);st.addEventListener('pointercancel',up);
+  st.addEventListener('click',function(e){
+    var b=e.target.closest('.tb');if(!b||!S) return;
+    if(b.dataset.act==='ghost'){S.ghost=!S.ghost;b.setAttribute('aria-pressed',S.ghost?'true':'false');H.setGhost(S.rig,S.ghost)}
+    else if(b.dataset.act==='reset'){S.u.rx=0;S.u.ry=0;S.u.vy=0}
+  });
+}
+H.activate=function(slide){
+  var st=slide.querySelector('[data-stage]'),name=slide.dataset.scene;
+  if(!st||!name){S=null;stageEl=null;return}
+  var gl=initGL();
+  if(!gl){var ng=st.querySelector('.nogl');if(ng) ng.style.display='grid';S=null;return}
+  stageEl=st;bindStage(st);
+  var sc=H.scenes[name];if(!sc){S=null;return}
+  if(!sc.inst){
+    try{sc.inst=sc.make(gl.env)}catch(e){console.error(e);sc.inst=null;var ng2=st.querySelector('.nogl');if(ng2) ng2.style.display='grid';S=null;return}
+    var hc=st.querySelector('.hots');
+    sc.els=sc.inst.hot.map(function(h){
+      var el=document.createElement('div');el.className='hot';el.innerHTML='<i></i><b></b>';el.lastChild.textContent=h.label;hc.appendChild(el);return el;
+    });
+  }
+  S=sc.inst;hotEls=sc.els;
+  st.insertBefore(gl.rd.domElement,st.firstChild);
+  if(ro) ro.disconnect();
+  if(window.ResizeObserver){ro=new ResizeObserver(resize);ro.observe(st)}
+  resize();
+};
+var v3=null,last=0,T=0;
+function frame(ts){
+  requestAnimationFrame(frame);
+  var dt=Math.min(.05,(ts-last)/1000||.016);last=ts;if(document.hidden) return;T+=dt;
+  ddraw(dt,T);
+  if(!R||!S||!stageEl||cur<0||!slides[cur].classList.contains('on')) return;
+  var u=S.u;
+  if(!reduce){u.ry+=u.vy;u.vy*=.94;if(S.spin) u.ry+=S.spin*dt}
+  S.rig.rotation.set(S.base.rx+u.rx,S.base.ry+u.ry+(S.sway&&!reduce?Math.sin(T*.35)*S.sway:0),0);
+  S.update(T,dt);
+  R.rd.render(S.scene,S.camera);
+  S.rig.updateMatrixWorld(true);
+  var w=stageEl.clientWidth,h=stageEl.clientHeight;
+  if(!v3) v3=new THREE.Vector3();
+  for(var i=0;i<S.hot.length;i++){
+    var hh=S.hot[i],el=hotEls[i];if(!el) continue;
+    v3.copy(hh.p);S.rig.localToWorld(v3);v3.project(S.camera);
+    var x=(v3.x*.5+.5)*w,y=(-v3.y*.5+.5)*h,ew=el.offsetWidth||90;
+    var left=(hh.side==='l');
+    el.style.flexDirection=left?'row-reverse':'row';
+    el.style.transform='translate('+(left?x-ew+5:x-5)+'px,'+(y-9)+'px)';
+    el.style.opacity=(x<0||x>w||y<0||y>h)?0:1;
+  }
+}
+H.boot=function(){
+  dinit();
+  var h0=0;try{h0=parseInt((location.hash||'').replace('#',''),10)}catch(e){}
+  go(h0>=1&&h0<=N?h0-1:0);
+  requestAnimationFrame(frame);
+};
+})();
+</script>
+<script>
+(function(){
+'use strict';
+var T3=THREE,TAU=Math.PI*2;
+
+/* surface point on a lumpy ellipsoid (same function as H.lumpy) */
+function sp(o,x,y,z,k){
+  var l=Math.sqrt(x*x+y*y+z*z)||1;x/=l;y/=l;z/=l;
+  var d=o.r*(1+(H.fbm(x*o.freq+o.seed,y*o.freq+o.seed*1.7,z*o.freq+o.seed*2.3)-.5)*o.amp)*k;
+  return new T3.Vector3(x*d*o.sx,y*d*o.sy,z*d*o.sz);
+}
+function ropes(parent,o,pos,n,color,rad){
+  var m=H.mat(color,{roughness:.3,clearcoat:.9});
+  for(var k=0;k<n;k++){
+    var pts=[],a0=k*(TAU/n)+.4;
+    for(var i=0;i<=26;i++){
+      var t=i/26,phi=.5+t*1.7+.22*Math.sin(t*9+k),th=a0+t*3.6;
+      var v=sp(o,Math.sin(phi)*Math.cos(th),Math.cos(phi),Math.sin(phi)*Math.sin(th),1.035);
+      pts.push(v.add(pos));
+    }
+    parent.add(new T3.Mesh(H.tube(pts,rad,110),m));
+  }
+}
+
+/* ================= RIBOSOME ================= */
+H.scenes.ribo={make:function(env){
+  var S=H.newScene(env,{z:14.5,cy:-1.1,ty:-1.1,rx:.16,ry:-.5,spin:.09,fit:1.6});
+  var root=S.root;
+
+  var bigO={r:1,sx:1.4,sy:1.05,sz:1.15,seed:3.1,amp:.3,freq:1.9,seg:76};
+  var bigP=new T3.Vector3(0,-.55,0);
+  var big=new T3.Mesh(H.lumpy(bigO),H.mat(0xe0820f,{roughness:.5,clearcoat:.25,envMapIntensity:.55}));
+  big.position.copy(bigP);root.add(big);
+  ropes(root,bigO,bigP,6,0xffc04a,.05);
+
+  var smO={r:1,sx:1.15,sy:.62,sz:.92,seed:7.7,amp:.28,freq:2.1,seg:64};
+  var smP=new T3.Vector3(-.1,1.15,0);
+  var sm=new T3.Mesh(H.lumpy(smO),H.mat(0xe0407a,{roughness:.5,clearcoat:.25,envMapIntensity:.55}));
+  sm.position.copy(smP);root.add(sm);
+  ropes(root,smO,smP,4,0xff8fb4,.04);
+
+  /* mRNA */
+  var mc=new T3.CatmullRomCurve3([new T3.Vector3(-4.3,.95,.8),new T3.Vector3(-2.7,.64,.4),new T3.Vector3(-1.2,.54,.12),new T3.Vector3(0,.53,0),
+    new T3.Vector3(1.3,.53,-.1),new T3.Vector3(2.9,.72,-.5),new T3.Vector3(4.3,1.05,-.9)]);
+  var mr=new T3.Mesh(new T3.TubeGeometry(mc,120,.075,10,false),H.mat(0x35e0d0,{roughness:.28,emissive:0x0a6a62,emissiveIntensity:.35}));
+  root.add(mr);
+  var NC=22,cod=new T3.InstancedMesh(new T3.SphereGeometry(.14,16,12),H.mat(0xbffcf4,{roughness:.2,clearcoat:1}),NC),dm=new T3.Object3D();
+  root.add(cod);
+
+  /* tRNA */
+  var trm=H.mat(0xff5fa2,{roughness:.3});
+  [[-.35,.2],[.4,.1]].forEach(function(a,i){
+    var x=a[0],z=a[1];
+    var pts=[new T3.Vector3(x,.53,z),new T3.Vector3(x,.5,z+.5),new T3.Vector3(x+.15,.62,z+.95),new T3.Vector3(x+.55,.62,z+1.15)];
+    root.add(new T3.Mesh(H.tube(pts,.05,30),trm));
+    var aa=new T3.Mesh(new T3.SphereGeometry(.13,16,12),H.mat(0xb7f34a,{roughness:.25}));aa.position.copy(pts[3]);root.add(aa);
+  });
+
+  /* growing polypeptide */
+  var pc=new T3.CatmullRomCurve3([new T3.Vector3(.5,-.95,.25),new T3.Vector3(.95,-1.7,.55),new T3.Vector3(.5,-2.4,.95),
+    new T3.Vector3(1.3,-2.95,.55),new T3.Vector3(1.9,-3.4,.95),new T3.Vector3(1.6,-4.0,1.45)]);
+  var NP=42,pol=new T3.InstancedMesh(new T3.SphereGeometry(.12,16,12),H.mat(0xffffff,{roughness:.25,clearcoat:1}),NP),col=new T3.Color(),c1=new T3.Color(0xb7f34a),c2=new T3.Color(0x2dd4c8);
+  for(var i=0;i<NP;i++){
+    var q=pc.getPoint(i/(NP-1));dm.position.copy(q);dm.scale.setScalar(.85+.3*H.rnd(i));dm.updateMatrix();pol.setMatrixAt(i,dm.matrix);
+    col.copy(c1).lerp(c2,i/(NP-1));pol.setColorAt(i,col);
+  }
+  root.add(pol);
+  var dust=H.dust(S.scene,150,11,9,7,0x9afaf0,.08);
+
+  S.hot=[
+    {label:'Katta subbirlik (60S)',p:new T3.Vector3(1.6,-1.15,1.0),side:'r'},
+    {label:'Kichik subbirlik (40S)',p:new T3.Vector3(-1.2,1.45,.7),side:'l'},
+    {label:'mRNK',p:new T3.Vector3(-3.1,.72,.5),side:'l'},
+    {label:'tRNK',p:new T3.Vector3(.95,.62,1.35),side:'r'},
+    {label:'Polipeptid zanjir',p:new T3.Vector3(1.9,-3.4,.95),side:'r'}
+  ];
+  S.update=function(t){
+    for(var i=0;i<NC;i++){
+      var u=((i/NC)+t*.016)%1,p=mc.getPoint(u);dm.position.copy(p);dm.scale.setScalar(Math.pow(Math.sin(Math.PI*u),.5));dm.updateMatrix();cod.setMatrixAt(i,dm.matrix);
+    }
+    cod.instanceMatrix.needsUpdate=true;
+    root.position.y=Math.sin(t*.7)*.06;dust(t);
+  };
+  return S;
+}};
+
+/* ================= CENTRIOLE builder (also used by the cilium base) ================= */
+H.centriole=function(o){
+  var g=new T3.Group(),R=o.R||1,r=o.r||.115,len=o.len||2;
+  var tex=o.tex.clone();tex.needsUpdate=true;tex.repeat.set(2,Math.max(1,len*2.2));
+  var m=H.mat(o.color||0xff5fa2,{roughness:.36,side:T3.DoubleSide,bumpMap:tex,bumpScale:.08,clearcoat:.25,envMapIntensity:.6});
+  var geo=new T3.CylinderGeometry(r,r,len,28,1,true),Y=new T3.Vector3(0,1,0);
+  for(var k=0;k<9;k++){
+    var a=k*TAU/9,rad=new T3.Vector3(Math.cos(a),0,Math.sin(a)),tan=new T3.Vector3(-Math.sin(a),0,Math.cos(a));
+    var d=tan.clone().multiplyScalar(Math.cos(.7)).addScaledVector(rad,Math.sin(.7));
+    for(var j=0;j<3;j++){
+      var me=new T3.Mesh(geo,m);me.position.copy(rad.clone().multiplyScalar(R).addScaledVector(d,j*r*1.7));g.add(me);
+    }
+    /* cartwheel spokes */
+    var sl=R-r*1.4,sg=new T3.CylinderGeometry(r*.22,r*.22,sl,8),sm=H.mat(0xffd0e4,{roughness:.3});
+    [-len/2+.35*len/2*2*.5,-len/2+.9*len/2*1.0].forEach(function(y){
+      var s=new T3.Mesh(sg,sm);s.position.copy(rad.clone().multiplyScalar(r*1.0+sl/2));s.position.y=y;
+      s.quaternion.setFromUnitVectors(Y,rad);g.add(s);
+    });
+  }
+  [-len/2+.35*len/2*2*.5,-len/2+.9*len/2*1.0].forEach(function(y){
+    var hub=new T3.Mesh(new T3.SphereGeometry(r*1.1,16,12),H.mat(0xffd0e4,{roughness:.25}));hub.position.y=y;g.add(hub);
+  });
+  return g;
+};
+
+/* ================= CENTRIOLE PAIR ================= */
+H.scenes.cent={make:function(env){
+  var S=H.newScene(env,{z:10.6,rx:.22,ry:-.65,spin:.12,fit:1.5});
+  var root=S.root,tex=H.tubTex(),off=new T3.Vector3(-.4,.2,0);
+  root.position.copy(off);
+  var mother=H.centriole({R:1,r:.115,len:2.1,color:0xd63a7a,tex:tex});mother.position.set(-.7,0,0);root.add(mother);
+  var dau=H.centriole({R:.85,r:.1,len:1.4,color:0xe6609a,tex:tex});dau.rotation.z=-Math.PI/2;dau.position.set(1.4,-.55,0);root.add(dau);
+
+  /* pericentriolar material cloud */
+  var n=300,pos=new Float32Array(n*3),cl=new Float32Array(n*3),c=new T3.Color(),i;
+  for(i=0;i<n;i++){
+    var u=Math.random(),v=Math.random()*TAU,w=Math.acos(2*Math.random()-1),rr=Math.pow(Math.random(),.65);
+    pos[i*3]=.4+Math.sin(w)*Math.cos(v)*2.7*rr;pos[i*3+1]=-.2+Math.cos(w)*2.2*rr;pos[i*3+2]=Math.sin(w)*Math.sin(v)*2.2*rr;
+    c.set(u<.55?0xff7ab8:0x7ff2e6);cl[i*3]=c.r;cl[i*3+1]=c.g;cl[i*3+2]=c.b;
+  }
+  var pg=new T3.BufferGeometry();pg.setAttribute('position',new T3.BufferAttribute(pos,3));pg.setAttribute('color',new T3.BufferAttribute(cl,3));
+  var pm=new T3.PointsMaterial({size:.16,map:H.sprite(),vertexColors:true,transparent:true,opacity:.55,depthWrite:false,blending:T3.AdditiveBlending});pm.userData.noghost=true;
+  var pcm=new T3.Points(pg,pm);root.add(pcm);
+
+  /* microtubule aster growing out of the centrosome */
+  var am=H.mat(0x2dd4c8,{roughness:.3,emissive:0x0a6a62,emissiveIntensity:.3}),tip=null;
+  for(i=0;i<9;i++){
+    var th=H.rnd(i+3)*TAU,ph=Math.acos(2*H.rnd(i+9)-1),dir=new T3.Vector3(Math.sin(ph)*Math.cos(th),Math.cos(ph),Math.sin(ph)*Math.sin(th));
+    if(Math.abs(dir.x)>.55&&dir.x>0&&Math.abs(dir.y)<.5) dir.x*=-1;
+    var st=new T3.Vector3(.4,-.2,0).addScaledVector(dir,.9),len=2.4+H.rnd(i+21)*1.2;
+    var mid=st.clone().addScaledVector(dir,len*.5).add(new T3.Vector3((H.rnd(i+5)-.5)*.5,(H.rnd(i+6)-.5)*.5,(H.rnd(i+7)-.5)*.5));
+    var en=st.clone().addScaledVector(dir,len);
+    root.add(new T3.Mesh(H.tube([st,mid,en],.028,40),am));
+    if(i===2) tip=en.clone();
+  }
+  var dust=H.dust(S.scene,140,10,8,6,0x9afaf0,.08);
+  S.hot=[
+    {label:'Ona sentriola',p:new T3.Vector3(-.7+.9,1.0,.2).add(off),side:'l'},
+    {label:'Qiz sentriola',p:new T3.Vector3(2.1,-.55,.1).add(off),side:'r'},
+    {label:'9 × 3 mikronaycha',p:new T3.Vector3(-.7-.94,.15,.34).add(off),side:'l'},
+    {label:'Urchuq iplari boshi',p:tip.clone().add(off),side:'r'}
+  ];
+  S.update=function(t){pcm.rotation.y=t*.05;dust(t)};
+  return S;
+}};
+})();
+(function(){
+'use strict';
+var T3=THREE,TAU=Math.PI*2;
+
+/* ================= MICROTUBULE ================= */
+H.scenes.mt={make:function(env){
+  var S=H.newScene(env,{z:12.6,cy:.3,ty:.1,rx:.22,ry:-.3,spin:0,sway:.35,fit:1.5});
+  var root=S.root,NPF=13,ROWS=14,RAD=.52,DL=.4,SH=DL*3/13,X0=-ROWS*DL/2;
+  var geo=new T3.SphereGeometry(1,18,14),mat=H.mat(0xffffff,{roughness:.3,clearcoat:.9});
+  var list=[],j,i;
+  for(j=0;j<NPF;j++){
+    var rows=ROWS+(j%4===0?-1:(j%3===0?1:0)),curl=(j%3===1);
+    for(i=0;i<rows;i++){
+      var e=(curl&&i>=rows-2)?(i-(rows-3))*.15:0;
+      list.push({j:j,i:i,rows:rows,e:e});
+    }
+  }
+  var mesh=new T3.InstancedMesh(geo,mat,list.length*2),o=new T3.Object3D(),col=new T3.Color(),ca=new T3.Color(0x2dd4c8),cb=new T3.Color(0x6f7bff),k=0;
+  function P(jj,ii,w,e){
+    var a=jj*TAU/NPF,r=RAD+(e||0),x=X0+ii*DL+jj*SH+(w?DL*.75:DL*.25)+(e||0)*.35;
+    return new T3.Vector3(x,Math.cos(a)*r,Math.sin(a)*r);
+  }
+  list.forEach(function(d){
+    for(var w=0;w<2;w++){
+      var p=P(d.j,d.i,w,d.e),s=.97+.06*H.rnd(k+1);
+      o.position.copy(p);o.rotation.set(0,0,0);o.scale.set(.095*s,.125*s,.125*s);o.updateMatrix();mesh.setMatrixAt(k,o.matrix);
+      col.copy(w?cb:ca).multiplyScalar(.88+.2*H.rnd(k+7));mesh.setColorAt(k,col);k++;
+    }
+  });
+  root.add(mesh);
+
+  /* free tubulin dimers near the plus end */
+  var NF=24,free=new T3.InstancedMesh(geo,H.mat(0xffffff,{roughness:.3,clearcoat:.9}),NF*2),fp=[];
+  for(i=0;i<NF;i++){
+    fp.push({p:new T3.Vector3(3.4+Math.random()*1.8,(Math.random()-.5)*2.6,(Math.random()-.5)*2.6),v:new T3.Vector3()});
+    free.setColorAt(i*2,ca);free.setColorAt(i*2+1,cb);
+  }
+  root.add(free);
+
+  /* kinesin carrying a vesicle */
+  var top=RAD+.2,hm=H.mat(0xffb547,{roughness:.35}),hA=new T3.Mesh(H.lumpy({r:.12,seed:2,amp:.3,seg:20}),hm),hB=new T3.Mesh(H.lumpy({r:.12,seed:5,amp:.3,seg:20}),hm);
+  root.add(hA);root.add(hB);
+  var stalk=new T3.Mesh(new T3.CylinderGeometry(.03,.03,1,8),H.mat(0xffd98a,{roughness:.3}));root.add(stalk);
+  var ves=new T3.Mesh(new T3.SphereGeometry(.62,40,28),H.mat(0xff5fa2,{transparent:true,opacity:.55,roughness:.1,clearcoat:1,emissive:0x5a0f30,emissiveIntensity:.35,envMapIntensity:.9}));
+  var ves2=new T3.Mesh(new T3.SphereGeometry(.5,32,24),H.mat(0xffb6d6,{transparent:true,opacity:.25,roughness:.1,envMapIntensity:.6}));
+  root.add(ves);root.add(ves2);
+  var dust=H.dust(S.scene,140,11,7,6,0x9afaf0,.07),Y=new T3.Vector3(0,1,0);
+  function link(m,a,b){var d=b.clone().sub(a),l=d.length();m.position.copy(a).addScaledVector(d,.5);m.quaternion.setFromUnitVectors(Y,d.normalize());m.scale.set(1,l,1)}
+
+  var off=new T3.Vector3(-1.1,0,0);root.position.copy(off);var pa=P(3,3,0,0).add(off),pb=P(3,8,1,0).add(off);
+  S.hot=[
+    {label:'α-tubulin',p:pa,side:'l'},{label:'β-tubulin',p:pb,side:'r'},
+    {label:'Plyus (+) uchi',p:new T3.Vector3(2.5,.2,.2),side:'r'},
+    {label:'Minus (−) uchi',p:new T3.Vector3(-3.1,-.1,.1),side:'l'},
+    {label:'Kinezin va yuk',p:new T3.Vector3(0,1.9,0),side:'r'}
+  ];
+  var cargo=S.hot[4];
+  S.update=function(t,dt){
+    var s=-2.1+((t*.28)%4.4),ph=t*3.2,
+      ax=s+.22*Math.sin(ph),ay=top+.08*Math.max(0,Math.cos(ph)),bx=s-.22*Math.sin(ph),by=top+.08*Math.max(0,-Math.cos(ph));
+    hA.position.set(ax,ay,0);hB.position.set(bx,by,0);
+    var c=new T3.Vector3(s,top+1.15,0);ves.position.copy(c);ves2.position.copy(c);cargo.p.set(s,top+1.9,0);
+    link(stalk,new T3.Vector3(s,top+.05,0),new T3.Vector3(s,top+.65,0));
+    var tip=new T3.Vector3(3.4,0,0);
+    for(var n=0;n<NF;n++){
+      var f=fp[n];
+      f.v.x+=(Math.random()-.5)*dt*6;f.v.y+=(Math.random()-.5)*dt*6;f.v.z+=(Math.random()-.5)*dt*6;
+      f.v.addScaledVector(tip.clone().sub(f.p).normalize(),dt*.5);f.v.multiplyScalar(.96);
+      f.p.addScaledVector(f.v,dt*1.4);
+      if(f.p.distanceTo(tip)<.5||f.p.x>5.6||Math.abs(f.p.y)>2||Math.abs(f.p.z)>2){f.p.set(4.4+Math.random()*1.0,(Math.random()-.5)*2.4,(Math.random()-.5)*2.4);f.v.set(0,0,0)}
+      o.rotation.set(0,0,0);
+      o.position.copy(f.p);o.position.x-=.1;o.scale.set(.095,.125,.125);o.updateMatrix();free.setMatrixAt(n*2,o.matrix);
+      o.position.copy(f.p);o.position.x+=.1;o.updateMatrix();free.setMatrixAt(n*2+1,o.matrix);
+    }
+    free.instanceMatrix.needsUpdate=true;dust(t);
+  };
+  return S;
+}};
+
+/* ================= ACTIN + INTERMEDIATE FILAMENT + MICROTUBULE (to scale) ================= */
+H.scenes.fil={make:function(env){
+  var S=H.newScene(env,{z:11.5,cy:.2,ty:.1,rx:.14,ry:-.28,spin:0,sway:.32,fit:2.0});
+  var root=S.root,i,s,L=8,yMT=2.0,yIF=.1,yAC=-1.7;
+
+  /* microtubule, 25 nm */
+  var tex=H.tubTex();tex.repeat.set(1.6,2.5);
+  var mt=new T3.Mesh(new T3.CylinderGeometry(.62,.62,L,44,1,true),H.mat(0x2dd4c8,{roughness:.34,side:T3.DoubleSide,bumpMap:tex,bumpScale:1.2}));
+  mt.rotation.z=Math.PI/2;mt.position.y=yMT;root.add(mt);
+  [-1,1].forEach(function(q){var rim=new T3.Mesh(new T3.TorusGeometry(.62,.035,10,44),H.mat(0x9afaf0,{roughness:.3}));rim.rotation.y=Math.PI/2;rim.position.set(q*L/2,yMT,0);root.add(rim)});
+
+  /* intermediate filament, 10 nm: twisted rope of 8 strands */
+  var am=[H.mat(0xffb547,{roughness:.32}),H.mat(0xffd27a,{roughness:.32})];
+  for(s=0;s<8;s++){
+    var pts=[];
+    for(i=0;i<=64;i++){var x=-L/2+i*L/64,a=s*TAU/8+x*1.7;pts.push(new T3.Vector3(x,yIF+.16*Math.cos(a),.16*Math.sin(a)))}
+    root.add(new T3.Mesh(H.tube(pts,.075,160),am[s%2]));
+  }
+  var core=new T3.Mesh(new T3.CylinderGeometry(.1,.1,L,12),H.mat(0xa85a00,{roughness:.5}));core.rotation.z=Math.PI/2;core.position.y=yIF;root.add(core);
+
+  /* actin filament, 7 nm: double helix of G-actin beads */
+  var NB=52,ac=new T3.InstancedMesh(new T3.SphereGeometry(1,18,14),H.mat(0xffffff,{roughness:.3,clearcoat:.9}),NB*2),o=new T3.Object3D(),col=new T3.Color(),c1=new T3.Color(0xff7a66),c2=new T3.Color(0xffa79a),k=0;
+  for(s=0;s<2;s++)for(i=0;i<NB;i++){
+    var xx=-L/2+.1+i*(L-.2)/(NB-1),ang=xx*(TAU/3.6)+s*Math.PI,sc=.115*(.94+.12*H.rnd(k+3));
+    o.position.set(xx,yAC+.06*Math.cos(ang),.06*Math.sin(ang));o.scale.set(sc*1.05,sc,sc);o.rotation.set(0,0,0);o.updateMatrix();ac.setMatrixAt(k,o.matrix);
+    col.copy(s?c2:c1).multiplyScalar(.9+.18*H.rnd(k+11));ac.setColorAt(k,col);k++;
+  }
+  root.add(ac);
+  var dust=H.dust(S.scene,120,11,7,6,0x9afaf0,.07);
+  S.hot=[
+    {label:'Mikronaycha ⌀ 25 nm',p:new T3.Vector3(-3.7,yMT+.95,0),side:'r'},
+    {label:'Oraliq ip ⌀ 10 nm',p:new T3.Vector3(-3.7,yIF+.7,0),side:'r'},
+    {label:'Mikroip (aktin) ⌀ 7 nm',p:new T3.Vector3(-3.7,yAC+.6,0),side:'r'}
+  ];
+  S.update=function(t){root.position.x=Math.sin(t*.4)*.12;dust(t)};
+  return S;
+}};
+
+/* ================= CILIUM / FLAGELLUM (9+2) ================= */
+H.scenes.cilium={make:function(env){
+  var S=H.newScene(env,{z:13,cy:-.5,ty:-.5,rx:.5,ry:-.4,spin:.1,fit:1.5});
+  var root=S.root,tex=H.tubTex(),Y=new T3.Vector3(0,1,0),R=1.25,LEN=4.6,y0=0,k,i;
+  var tA=tex.clone();tA.needsUpdate=true;tA.repeat.set(2,LEN*2.2);
+  var mA=H.mat(0x2dd4c8,{roughness:.34,side:T3.DoubleSide,bumpMap:tA,bumpScale:.3}),mB=H.mat(0x7ff2e6,{roughness:.34,side:T3.DoubleSide,bumpMap:tA,bumpScale:.3});
+  var gA=new T3.CylinderGeometry(.19,.19,LEN,28,1,true),gB=new T3.CylinderGeometry(.15,.15,LEN,24,1,true);
+  var rads=[],tans=[],dirs=[];
+  for(k=0;k<9;k++){
+    var a=k*TAU/9,rad=new T3.Vector3(Math.cos(a),0,Math.sin(a)),tan=new T3.Vector3(-Math.sin(a),0,Math.cos(a));
+    var d=tan.clone().multiplyScalar(Math.cos(.7)).addScaledVector(rad,Math.sin(.7));
+    rads.push(rad);tans.push(tan);dirs.push(d);
+    var A=new T3.Mesh(gA,mA);A.position.copy(rad).multiplyScalar(R);A.position.y=y0;root.add(A);
+    var B=new T3.Mesh(gB,mB);B.position.copy(rad).multiplyScalar(R).addScaledVector(d,.31);B.position.y=y0;root.add(B);
+  }
+  /* central pair + sheath */
+  var gC=new T3.CylinderGeometry(.15,.15,LEN,24,1,true),mC=H.mat(0xb7f34a,{roughness:.34,side:T3.DoubleSide,bumpMap:tA,bumpScale:.3});
+  [-.17,.17].forEach(function(x){var c=new T3.Mesh(gC,mC);c.position.set(x,y0,0);root.add(c)});
+  var sheath=new T3.Mesh(new T3.CylinderGeometry(.4,.4,LEN,32,1,true),H.mat(0xe8ffc0,{transparent:true,opacity:.18,side:T3.DoubleSide,roughness:.2,depthWrite:false}));sheath.position.y=y0;root.add(sheath);
+
+  /* radial spokes + heads */
+  var o=new T3.Object3D(),LV=9,spk=new T3.InstancedMesh(new T3.CylinderGeometry(.028,.028,.66,8),H.mat(0xffd0e4,{roughness:.3}),9*LV),hd=new T3.InstancedMesh(new T3.SphereGeometry(.07,12,10),H.mat(0xffd0e4,{roughness:.25}),9*LV),n=0;
+  for(i=0;i<LV;i++)for(k=0;k<9;k++){
+    var yy=y0-LEN/2+.35+i*(LEN-.7)/(LV-1);
+    o.position.copy(rads[k]).multiplyScalar(.74);o.position.y=yy;o.quaternion.setFromUnitVectors(Y,rads[k]);o.scale.set(1,1,1);o.updateMatrix();spk.setMatrixAt(n,o.matrix);
+    o.position.copy(rads[k]).multiplyScalar(.42);o.position.y=yy;o.quaternion.identity();o.updateMatrix();hd.setMatrixAt(n,o.matrix);n++;
+  }
+  root.add(spk);root.add(hd);
+
+  /* dynein arms (outer + inner) */
+  var NL=19,dyn=new T3.InstancedMesh(new T3.SphereGeometry(.075,12,10),H.mat(0xffb547,{roughness:.3,clearcoat:.8}),9*NL*2);n=0;
+  for(i=0;i<NL;i++)for(k=0;k<9;k++){
+    var y2=y0-LEN/2+.2+i*(LEN-.4)/(NL-1);
+    var p1=rads[k].clone().multiplyScalar(R).addScaledVector(tans[k],-.22).addScaledVector(rads[k],.15),p2=rads[k].clone().multiplyScalar(R).addScaledVector(tans[k],-.2).addScaledVector(rads[k],-.17);
+    o.quaternion.identity();o.scale.set(1,1.5,1);
+    o.position.copy(p1);o.position.y=y2;o.updateMatrix();dyn.setMatrixAt(n++,o.matrix);
+    o.position.copy(p2);o.position.y=y2+.05;o.updateMatrix();dyn.setMatrixAt(n++,o.matrix);
+  }
+  root.add(dyn);
+
+  /* nexin links */
+  var nx=new T3.InstancedMesh(new T3.CylinderGeometry(.018,.018,1,6),H.mat(0xbfeefa,{roughness:.3}),9*6);n=0;
+  for(i=0;i<6;i++)for(k=0;k<9;k++){
+    var kk=(k+1)%9,a1=rads[k].clone().multiplyScalar(R).addScaledVector(dirs[k],.45),a2=rads[kk].clone().multiplyScalar(R).addScaledVector(tans[kk],-.15),yv=y0-LEN/2+.5+i*(LEN-1)/5;
+    a1.y=yv;a2.y=yv;var dd=a2.clone().sub(a1);
+    o.position.copy(a1).addScaledVector(dd,.5);o.quaternion.setFromUnitVectors(Y,dd.clone().normalize());o.scale.set(1,dd.length(),1);o.updateMatrix();nx.setMatrixAt(n++,o.matrix);
+  }
+  root.add(nx);
+
+  /* ciliary membrane (glass) + cell surface */
+  var memM=H.mat(0xbfeefa,{transparent:true,opacity:.2,roughness:.05,clearcoat:1,side:T3.DoubleSide,envMapIntensity:1.5,depthWrite:false});
+  var mem=new T3.Mesh(new T3.CylinderGeometry(1.85,1.85,LEN+.2,64,1,true),memM);mem.position.y=y0+.1;root.add(mem);
+  var rim=new T3.Mesh(new T3.TorusGeometry(1.85,.04,10,64),H.mat(0xe6fbff,{transparent:true,opacity:.7,roughness:.1}));rim.rotation.x=Math.PI/2;rim.position.y=y0+LEN/2+.2;root.add(rim);
+  var disc=new T3.Mesh(new T3.CylinderGeometry(3.4,3.4,.08,72),H.mat(0x8fb4ff,{transparent:true,opacity:.2,roughness:.1,clearcoat:1,depthWrite:false}));disc.position.y=y0-LEN/2-.02;root.add(disc);
+
+  /* basal body */
+  var bb=H.centriole({R:R,r:.17,len:1.3,color:0xff5fa2,tex:tex});bb.position.y=y0-LEN/2-.6;root.add(bb);
+  var dust=H.dust(S.scene,140,10,9,6,0x9afaf0,.07),topY=y0+LEN/2;
+  S.hot=[
+    {label:'Siljish membranasi (bor)',p:new T3.Vector3(1.85,y0+1.3,0),side:'r'},
+    {label:'Aksonema 9 + 2 (membranasiz)',p:new T3.Vector3(rads[2].x*R,topY,rads[2].z*R),side:'l'},
+    {label:'Markaziy juft',p:new T3.Vector3(0,topY+.1,0),side:'r'},
+    {label:'Dinein dastalari',p:rads[6].clone().multiplyScalar(R*1.2).setY(y0+.6),side:'l'},
+    {label:'Radial spitslar',p:rads[0].clone().multiplyScalar(.74).setY(y0-.3),side:'r'},
+    {label:'Bazal tana (9 × 3)',p:new T3.Vector3(-1.3,y0-LEN/2-.6,.2),side:'l'}
+  ];
+  S.update=function(t){dust(t)};
+  return S;
+}};
+})();
+</script>
+<script>H.boot();</script>
+
+</body>
+</html>
